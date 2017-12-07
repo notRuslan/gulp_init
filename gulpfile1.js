@@ -22,16 +22,16 @@ const paths = {
 //pug
 function templates() {
     return gulp.src(paths.templates.pages)
-        .pipe(pug({pretty:true}))
+        .pipe(pug({ pretty: true }))
         .pipe(gulp.dest(paths.root));
 }
 
 function styles() {
     return gulp.src('./src/styles/app.scss')
         .pipe(sourcemaps.init())
-        .pipe(sass({outputStyle: 'compressed'}))
+        .pipe(sass({ outputStyle: 'compressed' }))
         .pipe(sourcemaps.write())
-        .pipe(rename({suffix: '.min'}))
+        .pipe(rename({ suffix: '.min' }))
         .pipe(gulp.dest(paths.styles.dest))
 }
 
@@ -51,7 +51,9 @@ function server() {
         server: paths.root,
         browser: "chrome"
     });
-    browserSync.watch(paths.root + '/**/*.*', browserSync.reload);
+    browserSync.watch(paths.root + '/**/*.*', browserSync.reload({
+        stream: true
+    }));
 }
 // function server() {
 //     browserSync.init({
