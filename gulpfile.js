@@ -1,4 +1,5 @@
 const gulp = require('gulp');
+// import gulp from 'gulp';
 const pug = require('gulp-pug');
 const sourcemaps = require('gulp-sourcemaps');
 const sass = require('gulp-sass');
@@ -14,8 +15,7 @@ const paths = {
     root: './build',
     templates: {
         pages: 'src/templates/pages/*.pug',
-        src: 'src/templates/**/.pug',
-        dest: 'build/assets/'
+        src: 'src/templates/**/*.pug'
     },
      images: {
         src: 'src/images/**/*.*',
@@ -33,7 +33,7 @@ const paths = {
 
 function scripts() {
     return gulp.src('src/scripts/app.js')
-        .pipe(gulpWebpack(webpack(webpackConfig, webpack))) // Для передачи 3й версии вебпак
+        .pipe(gulpWebpack(webpackConfig, webpack))
         .pipe(gulp.dest(paths.scripts.dest));
 }
 
@@ -41,7 +41,8 @@ function scripts() {
 function templates() {
     return gulp.src(paths.templates.pages)
         .pipe(pug({ pretty: true }))
-        .pipe(gulp.dest(paths.root));
+        .pipe(gulp.dest(paths.root))
+        .pipe(browserSync.stream());
 }
 
 function styles() {
@@ -62,13 +63,14 @@ function watch() {
     gulp.watch(paths.templates.src, templates);
     gulp.watch(paths.images.src, images);
     gulp.watch(paths.scripts.src, scripts);
-
 }
 
 function server() {
     browserSync.init({
         server: paths.root,
-        browser: "chrome"
+        browser: "chrome",
+        // injectChanges: true,
+        // browser: "firefox"
     });
     browserSync.watch(paths.root + '/**/*.*', browserSync.reload);
 }
@@ -86,6 +88,10 @@ exports.scripts = scripts;
 
 gulp.task('default', gulp.series(
     clean,
-    gulp.parallel(styles, templates, images, scripts),
+    // scripts,
+    styles,
+    templates,
+    // gulp.parallel(styles, templates),
+    // gulp.parallel(images, scripts),
     gulp.parallel(watch, server)
 ));
